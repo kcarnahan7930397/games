@@ -69,7 +69,7 @@ import com.stencyl.graphics.shaders.BloomShader;
 
 
 
-class ActorEvents_4 extends ActorScript
+class ActorEvents_54 extends ActorScript
 {
 	
 	
@@ -83,21 +83,28 @@ class ActorEvents_4 extends ActorScript
 	{
 		
 		/* ======================== Actor of Type ========================= */
-		addCollisionListener(actor, function(event:Collision, list:Array<Dynamic>):Void
+		addCollisionListener(getLastCreatedActor(), function(event:Collision, list:Array<Dynamic>):Void
 		{
-			if(wrapper.enabled && sameAsAny(getActorType(2), event.otherActor.getType(),event.otherActor.getGroup()))
+			if(wrapper.enabled && sameAsAny(getActorType(50), event.otherActor.getType(),event.otherActor.getGroup()))
 			{
-				event.otherActor.shout("_customEvent_" + "Hit");
-				recycleActor(actor);
+				if((actor.getAnimation() == "Full"))
+				{
+					actor.setAnimation("" + "Half");
+				}
+				else
+				{
+					actor.setAnimation("" + "Empty");
+				}
 			}
 		});
 		
-		/* ======================== Specific Actor ======================== */
-		addActorPositionListener(actor, function(enteredScreen:Bool, exitedScreen:Bool, enteredScene:Bool, exitedScene:Bool, list:Array<Dynamic>):Void
+		/* ======================== When Updating ========================= */
+		addWhenUpdatedListener(null, function(elapsedTime:Float, list:Array<Dynamic>):Void
 		{
-			if(wrapper.enabled && exitedScreen)
+			if(wrapper.enabled)
 			{
-				recycleActor(actor);
+				actor.setX(Engine.engine.getGameAttribute("Enemy X"));
+				actor.setY((Engine.engine.getGameAttribute("Enemy Y") - Engine.engine.getGameAttribute("enemy height")));
 			}
 		});
 		

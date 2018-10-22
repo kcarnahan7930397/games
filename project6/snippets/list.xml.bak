@@ -20,7 +20,7 @@
     </snippet>
     <snippet attachedevent="false" class="scripts.Design_21_21_health" classname="scripts.Design_21_21_health" desc="" description="" design="true" drawOrder="0" id="21" name="health" oid="-1" package="scripts" shared="false" type="actor">
         <actor default="thisactor" defaultValue="thisactor" desc="" dropdown="" fullname="Actor" hidden="true" id="2147483647" name="actor" order="0"/>
-        <number default="0" defaultValue="0" desc="" dropdown="" fullname="halth points" hidden="false" id="1" name="_halthpoints" order="1"/>
+        <number default="0.0" defaultValue="0.0" desc="" dropdown="" fullname="halth points" hidden="false" id="1" name="_halthpoints" order="1"/>
         <blocks/>
         <events>
             <event displayName="Type - Type" enabled="true" id="1" name="event-collide-typetotype" order="1" repeats="true"/>

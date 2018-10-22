@@ -71,16 +71,50 @@ import com.stencyl.graphics.shaders.BloomShader;
 
 class ActorEvents_2 extends ActorScript
 {
+	public var _HealthPoints:Actor;
+	public var _HealthPoints2:Float;
+	
+	/* ========================= Custom Event ========================= */
+	public function _customEvent_():Void
+	{
+		_HealthPoints2 -= 1;
+		propertyChanged("_HealthPoints2", _HealthPoints2);
+		actor.setFilter([createNegativeFilter()]);
+		runLater(1000 * 1, function(timeTask:TimedTask):Void
+		{
+			actor.clearFilters();
+		}, actor);
+	}
 	
 	
 	public function new(dummy:Int, actor:Actor, dummy2:Engine)
 	{
 		super(actor);
+		nameMap.set("Health Points", "_HealthPoints");
+		nameMap.set("Health Points 2", "_HealthPoints2");
+		_HealthPoints2 = 0;
 		
 	}
 	
 	override public function init()
 	{
+		
+		/* ======================== When Creating ========================= */
+		_HealthPoints2 = asNumber(3);
+		propertyChanged("_HealthPoints2", _HealthPoints2);
+		
+		/* ======================== When Updating ========================= */
+		addWhenUpdatedListener(null, function(elapsedTime:Float, list:Array<Dynamic>):Void
+		{
+			if(wrapper.enabled)
+			{
+				if((_HealthPoints2 <= 0))
+				{
+					playSound(getSound(9));
+					recycleActor(actor);
+				}
+			}
+		});
 		
 	}
 	
