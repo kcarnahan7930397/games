@@ -69,65 +69,60 @@ import com.stencyl.graphics.shaders.BloomShader;
 
 
 
-class ActorEvents_0 extends ActorScript
+class ActorEvents_6 extends ActorScript
 {
-	public var _Shipspeed:Float;
+	public var _radius:Float;
+	public var _speed:Float;
+	public var _life:Float;
 	
 	
 	public function new(dummy:Int, actor:Actor, dummy2:Engine)
 	{
 		super(actor);
-		nameMap.set("Ship speed", "_Shipspeed");
-		_Shipspeed = 20.0;
+		nameMap.set("radius", "_radius");
+		_radius = 0.0;
+		nameMap.set("speed", "_speed");
+		_speed = -10.0;
+		nameMap.set("life", "_life");
+		_life = 0.0;
 		
 	}
 	
 	override public function init()
 	{
 		
+		/* ======================== When Creating ========================= */
+		_life = asNumber(3);
+		propertyChanged("_life", _life);
+		
 		/* ======================== When Updating ========================= */
 		addWhenUpdatedListener(null, function(elapsedTime:Float, list:Array<Dynamic>):Void
 		{
 			if(wrapper.enabled)
 			{
-				if(isKeyDown("right"))
+				if((Math.abs((actor.getX() - Engine.engine.getGameAttribute("x blerb"))) <= (getScreenWidth() / 2)))
 				{
-					actor.setXVelocity(_Shipspeed);
+					actor.setXVelocity(-20);
 				}
-				else if(isKeyDown("left"))
-				{
-					actor.setXVelocity(-(_Shipspeed));
-				}
-				else if((!(isKeyDown("right")) && !(isKeyDown("left"))))
+				else
 				{
 					actor.setXVelocity(0);
 				}
 			}
 		});
 		
-		/* ======================== When Updating ========================= */
-		addWhenUpdatedListener(null, function(elapsedTime:Float, list:Array<Dynamic>):Void
+		/* ======================== Actor of Type ========================= */
+		addCollisionListener(actor, function(event:Collision, list:Array<Dynamic>):Void
 		{
-			if(wrapper.enabled)
+			if(wrapper.enabled && sameAsAny(getActorType(8), event.otherActor.getType(),event.otherActor.getGroup()))
 			{
-				if((actor.getScreenX() < 0))
+				recycleActor(event.otherActor);
+				_life = asNumber((_life - 1));
+				propertyChanged("_life", _life);
+				if((_life < 1))
 				{
-					actor.setX(1);
+					recycleActor(actor);
 				}
-				else if((actor.getScreenX() > (getScreenWidth() - (actor.getWidth()))))
-				{
-					actor.setX(((getScreenWidth() - (actor.getWidth())) - 1));
-				}
-			}
-		});
-		
-		/* =========================== Keyboard =========================== */
-		addKeyStateListener("action1", function(pressed:Bool, released:Bool, list:Array<Dynamic>):Void
-		{
-			if(wrapper.enabled && pressed)
-			{
-				createRecycledActor(getActorType(4), actor.getX(), actor.getY(), Script.FRONT);
-				getLastCreatedActor().applyImpulse(0, -1, 40);
 			}
 		});
 		

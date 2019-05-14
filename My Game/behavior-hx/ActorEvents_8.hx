@@ -40,7 +40,6 @@ import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2Fixture;
 import box2D.dynamics.joints.B2Joint;
-import box2D.collision.shapes.B2Shape;
 
 import motion.Actuate;
 import motion.easing.Back;
@@ -70,13 +69,15 @@ import com.stencyl.graphics.shaders.BloomShader;
 
 
 
-class SceneEvents_0 extends SceneScript
+class ActorEvents_8 extends ActorScript
 {
+	public var _actoroftype:Actor;
 	
 	
-	public function new(dummy:Int, dummy2:Engine)
+	public function new(dummy:Int, actor:Actor, dummy2:Engine)
 	{
-		super();
+		super(actor);
+		nameMap.set("actor of type", "_actoroftype");
 		
 	}
 	
@@ -84,7 +85,43 @@ class SceneEvents_0 extends SceneScript
 	{
 		
 		/* ======================== When Creating ========================= */
-		playSound(getSound(8));
+		if(Engine.engine.getGameAttribute("right"))
+		{
+			actor.applyImpulse(1, 0, 50);
+			actor.setAnimation("" + "right");
+			runLater(1000 * 1, function(timeTask:TimedTask):Void
+			{
+				recycleActor(actor);
+			}, actor);
+		}
+		else if(!(Engine.engine.getGameAttribute("right")))
+		{
+			actor.applyImpulse(-1, 0, 50);
+			actor.setAnimation("" + "left");
+			runLater(1000 * 1, function(timeTask:TimedTask):Void
+			{
+				recycleActor(actor);
+			}, actor);
+		}
+		
+		/* ======================== Actor of Type ========================= */
+		addCollisionListener(actor, function(event:Collision, list:Array<Dynamic>):Void
+		{
+			if(wrapper.enabled && sameAsAny(getActorType(6), event.otherActor.getType(),event.otherActor.getGroup()))
+			{
+				_actoroftype.shout("_customEvent_" + "Hit");
+				recycleActor(actor);
+			}
+		});
+		
+		/* ======================== Specific Actor ======================== */
+		addActorPositionListener(actor, function(enteredScreen:Bool, exitedScreen:Bool, enteredScene:Bool, exitedScene:Bool, list:Array<Dynamic>):Void
+		{
+			if(wrapper.enabled && exitedScreen)
+			{
+				recycleActor(actor);
+			}
+		});
 		
 	}
 	
